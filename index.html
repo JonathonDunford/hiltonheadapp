@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]>    <html class="no-js iem7"> <![endif]-->
+<!--[if (gt IEMobile 7)|!(IEMobile)]><!-->
+<html class="no-js">
+	<!--<![endif]-->
+	<head>
+		<meta charset="utf-8">
+		<title>Riverlink Map</title>
+		<meta name="HandheldFriendly" content="True">
+		<meta name="MobileOptimized" content="320">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta http-equiv="cleartype" content="on">
+		<!-- External CSS -->
+		<link rel="stylesheet" href="css/normalize.css">
+		<link rel="stylesheet" href="css/main.css">
+		<!--<link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />-->
+		<!-- External JS -->
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+		<!--<script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>-->
+		<!--<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB4Qr46NogUpSkGpzK9__ezXK_BbYQ9_WY&sensor=true" type="text/javascript"></script>-->
+		<script src="https://maps.googleapis.com/maps/api/js?sensor=true" type="text/javascript"></script>
+		<script src="js/main.js"></script>
+		<!--<script src="js/vendor/modernizr-2.6.2.min.js"></script>-->
+		<!--<script type="text/javascript" charset="utf-8" src="cordova.js" />-->
+	</head>
+	<body>
+
+		<div id="home_page" class="active_page">
+
+			<div class="logo_holder">
+				<img src="img/logo.png" />
+			</div>
+
+			<div id="home_button_container">
+
+				<div class="button_row">
+
+					<div class="left" onclick="open_page('map');">
+						<img src="img/map_marker.png" /><br />
+						<span class="button_text">Map</span>
+					</div>
+
+					<div class="right" onclick="open_page('notification');">
+						<img class="notification_img_toggle" src="img/mail_closed.png" /><br />
+						<span class="button_text">Notifications</span>
+					</div>
+
+					<div style="clear:both;"></div>
+
+				</div>
+
+				<div class="button_row">
+
+					<div class="left" onclick="open_page('report');">
+						<img src="img/scanner.png" /><br />
+						<span class="button_text">Report An Incident</span>
+					</div>
+
+					<div class="right" onclick="open_link('http://riverlink.org');">
+						<img src="img/cloud.png" /><br />
+						<span class="button_text">Visit Our<br />Website</span>
+					</div>
+
+					<div style="clear:both;"></div>
+
+				</div>
+
+				<div class="button_row" style="margin-bottom:25px;min-height:25px;">
+					<div class="one-third"><a href="javascript:open_link('https://co.clickandpledge.com/sp/d2/default.aspx?wid=35189');">Donate</a></div>
+					<div class="one-third"><a href="javascript:open_link('http://riverlink.org/learn/about-riverlink/volunteers/');">Volunteer</a></div>
+					<div class="one-third">
+						<a href="javascript:open_link('http://visitor.r20.constantcontact.com/manage/optin?v=001P3AZIpApn2C59UA1UKvmDTQoq-dd9yan1qxNYa3qVvuHCtvD9Gqr09qbSqw40gad23ilWyabwg4AnmLmoCDJ2Rl9kijlKBvVc5-dDu6snoMvwGn1_DlspQ%3D%3D');">
+							Join Us
+						</a>
+					</div>
+				</div>
+
+				<div class="button_row">
+					<div class="left"><a href="mailto:info@riverlink.org">Email</a></div>
+					<div class="right"><a href="tel:8282528474">Call</a></div>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div id="map_page">
+			<div id="map_container"></div>
+			<div id="map_popup_container">
+				<button style="float:right;margin:5px;" onclick="jQuery('#map_popup_container').hide('slide');">X</button><br />
+				<div id="map_popup_content"></div>
+			</div>
+		</div>
+
+		<div id="notification_page">
+			<ul id="notifications_list">
+
+				<li style="text-align:center;line-height:52px;">No new notifications.</li>
+
+			</ul>
+		</div>
+
+		<div id="report_page">
+			<div id="report_div">
+				<form id="report_form">
+					<input type="hidden" name="token" value="KH<R^.3jV>Tj$iFZ8L@t16$(" />
+					Message
+					<textarea id="report_message" name="report_message"></textarea>
+					Picture
+					<input type="file" id="report_image" name="report_image" />
+				</form>
+				<button class="submit_button" id="submit_report" onclick="submit_report();">Submit</button>
+			</div>
+		</div>
+
+		<div id="loading_div">Loading...</div>
+		<div id="loading_bg">&nbsp;</div>
+
+		<div id="page_header_title">
+			<div id="page_header_content" class="title_text">
+			</div>
+		</div>
+
+		<div id="nav_bar">
+
+			<div class="img_div">
+				<a href="javascript:open_page('home');"><img src="img/home.png" /></a>
+			</div>
+
+			<div class="img_div">
+				<a href="javascript:open_page('map');"><img src="img/map_marker.png" /></a>
+			</div>
+
+			<div class="img_div">
+				<a href="javascript:open_page('notification');"><img class="notification_img_toggle" src="img/mail_closed.png" /></a>
+			</div>
+
+			<div class="img_div">
+				<a href="javascript:open_page('report');"><img src="img/scanner.png" /></a>
+			</div>
+
+		</div>
+
+		<div id="right_menu_container">
+			<div id="right_tabs">
+				Options
+			</div>
+			<div id="right_menu_content">
+				<div style="margin-left: 5px; margin-top: 5px;">
+					<button id="toggle_on">Select All</button>
+					<button id="toggle_off">Deselect All</button>
+				</div>
+				<ul></ul>
+
+				<div style="margin: 15px 0 15px 5px; width: 100%; text-align: center;">
+					<img style="float:left;" src="https://s3.amazonaws.com/hiltonheadmls/gps_marker.png" />
+					<span class="button_text">Your Location</span>
+				</div>
+
+			</div>
+		</div>
+
+	</body>
+</html>
+\
