@@ -5,7 +5,7 @@
 	<!--<![endif]-->
 	<head>
 		<meta charset="utf-8">
-		<title>Riverlink Map</title>
+		<title>The Hilton Head App</title>
 		<meta name="HandheldFriendly" content="True">
 		<meta name="MobileOptimized" content="320">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -37,12 +37,12 @@
 				<div class="button_row">
 
 					<div class="left" onclick="open_page('map');">
-						<img src="img/map_marker.png" /><br />
+						<img src="img/blk_map_marker.png" /><br />
 						<span class="button_text">Map</span>
 					</div>
 
 					<div class="right" onclick="open_page('notification');">
-						<img class="notification_img_toggle" src="img/mail_closed.png" /><br />
+						<img class="notification_img_toggle" src="img/blk_mail_closed.png" /><br />
 						<span class="button_text">Notifications</span>
 					</div>
 
@@ -53,32 +53,17 @@
 				<div class="button_row">
 
 					<div class="left" onclick="open_page('report');">
-						<img src="img/scanner.png" /><br />
-						<span class="button_text">Report An Incident</span>
+						<img src="img/blk_tag.png" /><br />
+						<span class="button_text">Submit a<br />Review / Comment</span>
 					</div>
 
 					<div class="right" onclick="open_link('http://riverlink.org');">
-						<img src="img/cloud.png" /><br />
+						<img src="img/blk_cloud.png" /><br />
 						<span class="button_text">Visit Our<br />Website</span>
 					</div>
 
 					<div style="clear:both;"></div>
 
-				</div>
-
-				<div class="button_row" style="margin-bottom:25px;min-height:25px;">
-					<div class="one-third"><a href="javascript:open_link('https://co.clickandpledge.com/sp/d2/default.aspx?wid=35189');">Donate</a></div>
-					<div class="one-third"><a href="javascript:open_link('http://riverlink.org/learn/about-riverlink/volunteers/');">Volunteer</a></div>
-					<div class="one-third">
-						<a href="javascript:open_link('http://visitor.r20.constantcontact.com/manage/optin?v=001P3AZIpApn2C59UA1UKvmDTQoq-dd9yan1qxNYa3qVvuHCtvD9Gqr09qbSqw40gad23ilWyabwg4AnmLmoCDJ2Rl9kijlKBvVc5-dDu6snoMvwGn1_DlspQ%3D%3D');">
-							Join Us
-						</a>
-					</div>
-				</div>
-
-				<div class="button_row">
-					<div class="left"><a href="mailto:info@riverlink.org">Email</a></div>
-					<div class="right"><a href="tel:8282528474">Call</a></div>
 				</div>
 
 			</div>
@@ -105,12 +90,10 @@
 			<div id="report_div">
 				<form id="report_form">
 					<input type="hidden" name="token" value="KH<R^.3jV>Tj$iFZ8L@t16$(" />
-					Message
-					<textarea id="report_message" name="report_message"></textarea>
-					Picture
-					<input type="file" id="report_image" name="report_image" />
+					Comment / Review
+					<textarea id="comment" name="comment"></textarea>
 				</form>
-				<button class="submit_button" id="submit_report" onclick="submit_report();">Submit</button>
+				<button class="submit_button" id="submit_comment" onclick="submit_comment();">Submit</button>
 			</div>
 		</div>
 
@@ -137,7 +120,7 @@
 			</div>
 
 			<div class="img_div">
-				<a href="javascript:open_page('report');"><img src="img/scanner.png" /></a>
+				<a href="javascript:open_page('report');"><img src="img/tag.png" /></a>
 			</div>
 
 		</div>

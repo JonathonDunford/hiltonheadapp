@@ -5,8 +5,10 @@
 //DONE: need to handle errors for all AJAX calls, possibly no internet?
 //DONE: timeout check for new notifications every X seconds, change icon to mail_open and add to notification list, recreate notification list each timeout
 //DONE: timeout check for changes in DB, update layers accordingly (async), add date modified to DB, store date in js var, check against that var
-//TODO: for deployment: fix window call for iOS vs Android see: http://stackoverflow.com/questions/17887348/phonegap-open-link-in-browser
+//DONE (kinda): for deployment: fix window call for iOS vs Android see: http://stackoverflow.com/questions/17887348/phonegap-open-link-in-browser
 //DONE: for deployment: lock device orientation to portrait
+
+var base_server_url = 'http://thehiltonheadapp.com/';
 
 var map;
 var grabbed_notifications = false;
@@ -19,6 +21,7 @@ var styles = {}; // style_id => { 'icon_href' = }
 var layers = {}; // layer_id => { 'icon_href' = }
 var info_window = new google.maps.InfoWindow();
 var bounds = new google.maps.LatLngBounds();
+var current_gps_dot;
 
 google.maps.event.addDomListener(window, 'load', initialize_gmap);
 
@@ -42,7 +45,7 @@ jQuery(document).ready(function() {
 		if (jQuery('#right_menu_content').css('display') === 'none') {
 			jQuery('#right_menu_content').show();
 			jQuery('#right_tabs').css('right', '100%');
-			check_scrolling('#right_menu_content');
+			//check_scrolling('#right_menu_content');
 		} else {
 			jQuery('#right_menu_content').hide();
 			jQuery('#right_tabs').css('right', '0');
@@ -51,15 +54,19 @@ jQuery(document).ready(function() {
 	});
 
 	jQuery('#right_menu_content #toggle_on').on('click', function() {
-		if (jQuery('#right_menu_content ul li input:checkbox').prop('checked') == false) {
-			jQuery('#right_menu_content ul li input:checkbox').click();
-		}
+		jQuery('#right_menu_content ul li input:checkbox').each(function() {
+			if (!this.checked) {
+				jQuery(this).click();
+			}
+		});
 	});
 
 	jQuery('#right_menu_content #toggle_off').on('click', function() {
-		if (jQuery('#right_menu_content ul li input:checkbox').prop('checked') == true) {
-			jQuery('#right_menu_content ul li input:checkbox').click();
-		}
+		jQuery('#right_menu_content ul li input:checkbox').each(function() {
+			if (this.checked) {
+				jQuery(this).click();
+			}
+		});
 	});
 
 	grab_notifications();
@@ -73,7 +80,7 @@ function initialize_gmap() {
 	var mapOptions = {
 		mapTypeId : google.maps.MapTypeId.HYBRID,
 		zoom: 12,
-		center: new google.maps.LatLng(35.4769, -83.3206) //cherokee
+		center: new google.maps.LatLng(32.194209, -80.735092) //cherokee
 	};
 
 	// Display a map on the page
@@ -98,7 +105,7 @@ function open_link(link) {
 	window.open(link, '_blank', 'location=yes');
 }
 
-function submit_report() {
+function submit_comment() {
 
 	var i = 1;
 
@@ -128,7 +135,7 @@ function submit_report() {
 	var formData = new FormData(jQuery('#report_form')[0]);
 
 	jQuery.ajax({
-		url : 'http://riverlink.org/app/php/submit_report.php', //Server script to process data
+		url : base_server_url+'app/php/submit_comment.php', //Server script to process data
 		type : 'POST',
 		xhr : function() {// Custom XMLHttpRequest
 			var myXhr = jQuery.ajaxSettings.xhr();
@@ -145,7 +152,7 @@ function submit_report() {
 			//console.log(data);
 
 			if (data === 'true') {
-				loading_text('Report submitted successfully.');
+				loading_text('Comment / Review submitted successfully.');
 			} else {
 				loading_text(data);
 			}
@@ -157,7 +164,7 @@ function submit_report() {
 
 		},
 		error : function(xhr, ajaxOptions, thrownError) {
-			loading_text('There was an error uploading your file. Please verify internet connectivity and try again.');
+			loading_text('There was an error submtiting your Review / Comment. Please verify internet connectivity and try again.');
 			console.log('error: '+thrownError);
 
 			clearInterval(submit_text_interval);
@@ -177,7 +184,7 @@ function submit_report() {
 function grab_notifications() {
 	jQuery.ajax({
 		type: "POST",
-		url: "http://riverlink.org/app/php/grab_notifications.php",
+		url: base_server_url+"app/php/grab_notifications.php",
 		data: { token: "KH<R^.3jV>Tj$iFZ8L@t16$(" },
 		success: function( response ) {
 
@@ -185,9 +192,10 @@ function grab_notifications() {
 
 			var decoded_response = jQuery.parseJSON(response);
 
-			if (typeof decoded_response[0].urgency != "undefined") {
+			if (typeof decoded_response[0] != "undefined") {
 				jQuery('#notifications_list').html(''); //clear it first
-				jQuery('.notification_img_toggle').attr('src', 'img/mail_open.png');//change img to mail open
+				jQuery('#home_button_container .notification_img_toggle').attr('src', 'img/blk_mail_open.png');//change img to mail open
+				jQuery('#nav_bar .notification_img_toggle').attr('src', 'img/mail_open.png');//change img to mail open
 
 				jQuery.each(decoded_response, function(key, value) {
 					jQuery('#notifications_list').append('<li class="urgency_' + value.urgency + '">' +
@@ -199,7 +207,9 @@ function grab_notifications() {
 			} else {
 				//show no new notifications
 				jQuery('#notifications_list').html('<li style="text-align:center;line-height:52px;">No new notifications.</li>');
-				jQuery('.notification_img_toggle').attr('src', 'img/mail_closed.png');//change img to mail closed
+				jQuery('#home_button_container .notification_img_toggle').attr('src', 'img/blk_mail_closed.png');//change img to mail closed
+				jQuery('#nav_bar .notification_img_toggle').attr('src', 'img/mail_closed.png');
+
 			}
 		},
 		error: function() {
@@ -233,14 +243,14 @@ function open_map_popup(layer, ai_id) {
 	jQuery('#map_popup_content').html(popup_description);
 	jQuery('#map_popup_container').show('slide');
 
-	check_scrolling('#map_popup_content');
+	//check_scrolling('#map_popup_content');
 
 }
 
 function grab_places() {
 	jQuery.ajax({
 		type: "POST",
-		url: "http://riverlink.org/app/php/grab_places.php",
+		url: base_server_url+"app/php/grab_places.php",
 		data: { token: "KH<R^.3jV>Tj$iFZ8L@t16$(" },
 		success: function( response ) {
 
@@ -269,29 +279,36 @@ function grab_places() {
 					places[value.layer] = {};
 				}
 
-				//add marker
-				places[value.layer][ai] = new google.maps.Marker({
-					position : marker_position,
-					map : map,
-					title : value.title,
-					visible : true,
-					icon : styles[value.layer]['icon_href'],
-				});
+				if (typeof styles[value.style] != 'undefined') {
 
-				places[value.layer][ai].description = '<h3>'+value.title+'</h3>'+value.description;
+					//add marker
+					places[value.layer][ai] = new google.maps.Marker({
+						position : marker_position,
+						map : map,
+						title : value.title,
+						visible : true,
+						icon : styles[value.style]['icon_href'],
+					});
 
-				//scope work around
-				places[value.layer][ai].set('ai', ai);
+					places[value.layer][ai].description = '<h3>'+value.title+'</h3>'+value.description;
 
-				//add event listener
-				google.maps.event.addListener(places[value.layer][ai], 'click', function() {
-					info_window.setContent('<div style="text-align:center;max-width:200px">' +
-											'<h3>'+value.title+'</h3>'+
-											'<button onclick="open_map_popup(\''+value.layer+'\',\''+this.get('ai')+'\')">Details</button>'+
-											'</div>');
-					info_window.open(map, this);
-					map.setCenter(marker_position);
-				});
+					//scope work around
+					places[value.layer][ai].set('ai', ai);
+
+					//add event listener
+					google.maps.event.addListener(places[value.layer][ai], 'click', function() {
+						info_window.setContent('<div style="text-align:center;max-width:200px">' +
+												'<h3>'+value.title+'</h3>'+
+												'<button onclick="open_map_popup(\''+value.layer+'\',\''+this.get('ai')+'\')">Details</button>'+
+												'</div>');
+						info_window.open(map, this);
+						map.setCenter(marker_position);
+					});
+
+				} else {
+					console.log('Error on: ');
+					console.log(value);
+				}
 
 				ai++;
 			});
@@ -310,7 +327,7 @@ function grab_places() {
 function load_places() {
 	jQuery.ajax({
 		type: "POST",
-		url: "http://riverlink.org/app/php/grab_styles.php",
+		url: base_server_url+"app/php/grab_styles.php",
 		data: { token: "KH<R^.3jV>Tj$iFZ8L@t16$(" },
 		success: function( response ) {
 
@@ -339,7 +356,7 @@ function load_places() {
 function grab_layers() {
 	jQuery.ajax({
 		type: "POST",
-		url: "http://riverlink.org/app/php/grab_layers.php",
+		url: base_server_url+"app/php/grab_layers.php",
 		data: { token: "KH<R^.3jV>Tj$iFZ8L@t16$(" },
 		success: function( response ) {
 
@@ -350,6 +367,7 @@ function grab_layers() {
 			jQuery.each(decoded_response, function(key, value) {
 				layers[value.id] = {
 					'icon_href' : value.icon_href,
+					'display_name' : value.display_name,
 				};
 			});
 
@@ -369,6 +387,8 @@ function grab_layers() {
 
 function inject_layer_toggles() {
 
+	jQuery('#right_menu_content ul').html('');
+
 	//console.log( 'inject: ' + layers );
 
 	jQuery.each(layers, function(key, value) {
@@ -377,11 +397,10 @@ function inject_layer_toggles() {
 		/*var new_layer_title = key.toLowerCase().replace(/\b[a-z]/g, function(letter) {
 			return letter.toUpperCase();
 		});*/
-		var new_layer_title = key.replace('_', ' ');
 
 		var new_layer_li = '<li><img style="float:left;" src="'+ value.icon_href +'" />' +
 								'<input type="checkbox" checked="true" onclick="toggle_layer_visibility(this.checked, \''+key+'\')"/><br />' +
-								'<span class="button_text">'+ new_layer_title +'</span>' +
+								'<span class="button_text">'+ value.display_name +'</span>' +
 							'</li>';
 
 		jQuery('#right_menu_content ul').append(new_layer_li);
@@ -418,12 +437,12 @@ function open_page(page) {
 				jQuery('#page_header_content').html('Notifications');
 				jQuery('#page_header_title').show('slide', { direction: 'up' });
 				jQuery('#nav_bar').show('slide', { direction: 'down' });
-				check_scrolling('#notification_page');
+				//check_scrolling('#notification_page');
 			break;
 
 			case 'report':
 				jQuery('#right_menu_container').hide();
-				jQuery('#page_header_content').html('Report An Incident');
+				jQuery('#page_header_content').html('Submit a Review / Comment');
 				jQuery('#page_header_title').show('slide', { direction: 'up' });
 				jQuery('#nav_bar').show('slide', { direction: 'down' });
 			break;
@@ -436,7 +455,7 @@ function open_page(page) {
 
 function on_gps_error() {
 	if (grabbed_gps === false) {
-		loading_text('Riverlink can not access your location. If you would like to have your location represented on the map, please enable geolocation services.');
+		loading_text('The app can not access your location. If you would like to have your location represented on the map, please enable geolocation services.');
 		show_loading();
 		setTimeout(hide_loading, 5000);
 	}
@@ -453,7 +472,7 @@ function update_current_pos(location) {
 	$("#lat").text("Latitude : " + location.coords.latitude);
 	$("#lon").text("Longitude : " + location.coords.longitude);*/
 	//show current location on map
-	marker = new google.maps.Marker({
+	current_gps_dot = new google.maps.Marker({
 		position : myLatlng,
 		icon: 'https://s3.amazonaws.com/hiltonheadmls/gps_marker.png',
 		map : map,
@@ -461,13 +480,13 @@ function update_current_pos(location) {
 		zIndex: google.maps.Marker.MAX_ZINDEX + 1
 	});
 
-	google.maps.event.addListener(marker, 'click', function() {
+	google.maps.event.addListener(current_gps_dot, 'click', function() {
 		info_window.setContent('<div style="text-align:center;max-width:200px">' +
-								'<h3>'+marker.title+'</h3>'+
+								'<h3>'+current_gps_dot.title+'</h3>'+
 								'</div>');
 		info_window.open(map, this);
 
-		map.setCenter(marker.position);
+		map.setCenter(current_gps_dot.position);
 	});
 
 

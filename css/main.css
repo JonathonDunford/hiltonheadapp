@@ -1,5 +1,5 @@
 body {
-	background: #C7DAD4;
+	background: #FFFFFF;
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
@@ -8,7 +8,7 @@ a {
 }
 
 #home_page {
-	background: #C7DAD4;
+	background: #FFFFFF;
 	position: absolute;
 	top: 0;
 	width: 100%;
@@ -22,7 +22,7 @@ a {
 #home_button_container {
 	position: absolute;
 	width: 100%;
-	bottom: 20px;
+	bottom: 5px;
 }
 
 #map_page {
@@ -42,6 +42,10 @@ a {
 	padding-top: 7%;
 	padding-bottom: 53px;
 	overflow: hidden;
+}
+
+#notification_page {
+	overflow-y: scroll;
 }
 
 #map_container {
@@ -70,13 +74,14 @@ a {
 	margin: 10px;
 	overflow: hidden;
 	height: 90%;
+	overflow-y: scroll;
 }
 
 #nav_bar {
 	z-index: 11;
 	position: absolute;
 	bottom: 0;
-	background: #C7DAD4;
+	background: #000000;
 	display: none;
 	text-align:center;
 	width: 100%;
@@ -89,8 +94,8 @@ a {
 	z-index: 11;
 	position: absolute;
 	top: 0;
-	background: #C7DAD4;
-	color: #798287;
+	background: #000000;
+	color: #FFFFFF;
 	display: none;
 	text-align:center;
 	width: 100%;
@@ -118,8 +123,9 @@ a {
 }
 
 div.logo_holder {
-	margin:10% auto;
+	margin:8% auto;
 	width: 250px;
+	height: 197px;
 	/*-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
 	border-radius: 5px;
@@ -127,6 +133,7 @@ div.logo_holder {
 	-moz-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.75);
 	box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.75);*/
 	overflow: hidden;
+	position: relative;
 }
 
 div.logo_holder img {
@@ -157,23 +164,23 @@ div.button_row .right {
 }
 
 .button_text {
-	color: #798287;
+	color: #01A8EE;
 	font-weight: bold;
 	text-transform: uppercase;
 	font-size: 12px;
 }
 
 .title_text {
-	color: #798287;
+	color: #FFFFFF;
 	font-weight: bold;
 	text-transform: uppercase;
 	font-size: 14px;
 }
 
 .submit_button {
-	background: #B2D9D6;
+	background: #CF1017;
 	padding: 0.75em 0.75em;
-	color: #798287;
+	color: #FFFFFF;
 	font-weight: bold;
 	text-transform: uppercase;
 	line-height: 1em;
@@ -228,7 +235,6 @@ div.button_row .right {
 
 #right_menu_content {
 	background: #617284;
-
 	height:98%;
 	display:none;
 	-webkit-border-top-left-radius: 5px;
@@ -241,6 +247,7 @@ div.button_row .right {
 	-moz-box-shadow:    -2px 0px 5px 0px rgba(50, 50, 50, 0.75);
 	box-shadow:         -2px 0px 5px 0px rgba(50, 50, 50, 0.75);
 	overflow: hidden;
+	overflow-y: scroll;
 }
 
 #right_menu_content ul {
